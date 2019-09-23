@@ -12,6 +12,7 @@ import org.coinen.pacman.Location;
 import org.coinen.pacman.Player;
 import org.coinen.pacman.Point;
 import org.coinen.reactive.pacman.repository.PlayerRepository;
+import org.coinen.reactive.pacman.repository.PowerRepository;
 import org.coinen.reactive.pacman.service.ExtrasService;
 import org.coinen.reactive.pacman.service.MapService;
 import org.coinen.reactive.pacman.service.PlayerService;
@@ -27,13 +28,13 @@ public class DefaultPlayerService implements PlayerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPlayerService.class);
 
     final DirectProcessor<Player> playersProcessor = DirectProcessor.create();
-    final FluxSink<Player>        playersSink      = playersProcessor.serialize()
-                                                                     .sink();
+    final FluxSink<Player>        playersSink      = playersProcessor.sink();
 
     final PlayerRepository                    playerRepository;
+    final PowerRepository                     powerRepository;
     final ExtrasService                       extrasService;
     final MapService                          mapService;
-        final FastThreadLocal<Collection<Player>> playersThreadLocal =
+    final FastThreadLocal<Collection<Player>> playersThreadLocal =
         new FastThreadLocal<>() {
             @Override
             protected Collection<Player> initialValue() throws Exception {
@@ -41,13 +42,17 @@ public class DefaultPlayerService implements PlayerService {
             }
         };
 
-    public DefaultPlayerService(PlayerRepository repository,
+    public DefaultPlayerService(PlayerRepository playerRepository,
         ExtrasService extrasService,
-        MapService service) {
-        playerRepository = repository;
+        MapService mapService,
+        PowerRepository powerRepository
+    ) {
+        this.playerRepository = playerRepository;
         this.extrasService = extrasService;
-        mapService = service;
-        Flux.interval(Duration.ofSeconds(5))
+        this.mapService = mapService;
+        this.powerRepository = powerRepository;
+
+        Flux.interval(Duration.ofSeconds(10))
             .doOnNext(this::checkPlayers)
             .subscribe();
     }
@@ -81,7 +86,7 @@ public class DefaultPlayerService implements PlayerService {
                                                   .setState(Player.State.ACTIVE)
                                                   .setLocation(location);
                         var position = location.getPosition();
-                        var isPowerActive = extrasService.isPowerupActive();
+                        var isPowerActive = powerRepository.isPowerUp();
                         var isGhostPlayer = player.getType().equals(Player.Type.GHOST);
                         var isPacManPlayer = player.getType().equals(Player.Type.PACMAN);
 
@@ -103,7 +108,7 @@ public class DefaultPlayerService implements PlayerService {
                                         playerRepository.update(
                                             UUID.fromString(otherPlayer.getUuid()),
                                             p -> p.toBuilder()
-                                                  .setScore(p.getScore() + 25)
+                                                  .setScore(p.getScore() + 20)
                                                   .build()
                                         );
                                     playerBuilder.setState(Player.State.DISCONNECTED);

@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import io.rsocket.ConnectionSetupPayload;
 import io.rsocket.RSocket;
+import io.rsocket.RSocketFactory;
 import io.rsocket.SocketAcceptor;
 import io.rsocket.rpc.rsocket.RequestHandlingRSocket;
 import org.coinen.pacman.MapServiceClient;

@@ -31,7 +31,7 @@ public class GrpcPlayerController extends ReactorPlayerServiceGrpc.PlayerService
     public Flux<Player> players(Mono<Empty> message) {
         return playerService
             .players()
-            .onBackpressureDrop()
+            .onBackpressureBuffer()
             .subscriberContext(Context.of("uuid", CONTEXT_UUID_KEY.get()));
     }
 }

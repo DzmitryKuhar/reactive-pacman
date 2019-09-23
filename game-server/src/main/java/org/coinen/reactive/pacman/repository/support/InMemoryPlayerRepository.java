@@ -12,7 +12,7 @@ import org.jctools.maps.NonBlockingHashMap;
 
 public class InMemoryPlayerRepository implements PlayerRepository {
 
-    ConcurrentMap<UUID, Player> store = new NonBlockingHashMap<>();
+    final ConcurrentMap<UUID, Player> store = new NonBlockingHashMap<>();
 
     @Override
     public Collection<Player> findAll() {
@@ -37,5 +37,10 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     @Override
     public Player delete(UUID uuid) {
         return store.remove(uuid);
+    }
+
+    @Override
+    public int count() {
+        return store.size();
     }
 }

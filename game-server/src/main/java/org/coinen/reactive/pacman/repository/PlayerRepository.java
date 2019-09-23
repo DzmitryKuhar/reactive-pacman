@@ -18,4 +18,6 @@ public interface PlayerRepository {
     Player save(UUID uuid, Supplier<? extends Player> playerSupplier);
 
     Player delete(UUID uuid);
+
+    int count();
 }

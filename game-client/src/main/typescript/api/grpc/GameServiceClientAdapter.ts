@@ -12,7 +12,7 @@ export default class GameServiceClientAdapter implements GameService {
     constructor() {
         const urlParams = new URLSearchParams(window.location.search);
         const endpoint = urlParams.get('endpoint');
-        this.service = new GRPCWebServices.GameServiceClient(endpoint || "http://localhost:8000", {}, {});
+        this.service = new GRPCWebServices.GameServiceClient(endpoint || "http://dinoman.netifi.com:8000", {}, {});
     }
 
     start({ value }: Nickname.AsObject): Single<Config.AsObject> {
@@ -22,7 +22,7 @@ export default class GameServiceClientAdapter implements GameService {
 
         return new Single(subject => {
             let stream: ClientReadableStream<any>;
-            subject.onSubscribe();
+            subject.onSubscribe(undefined); //TODO: FIXME
             stream = this.service.start(nicknameProto as any, { "uuid": localStorage.getItem("uuid") }, (err, response) => {
                 if (err) {
                     subject.onError(new Error(`An Grpc Error was thrown. Code: [${err.code}]. Message: ${err.message}`));

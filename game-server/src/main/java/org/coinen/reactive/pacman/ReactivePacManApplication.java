@@ -9,5 +9,4 @@ public class ReactivePacManApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReactivePacManApplication.class, args);
 	}
-
 }

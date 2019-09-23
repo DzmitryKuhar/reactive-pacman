@@ -12,7 +12,7 @@ export default class SetupServiceClientAdapter {
     constructor() {
         const urlParams = new URLSearchParams(window.location.search);
         const endpoint = urlParams.get('endpoint');
-        this.service = new GRPCWebServices.SetupServiceClient(endpoint || "http://localhost:8000", {}, {});
+        this.service = new GRPCWebServices.SetupServiceClient(endpoint || "http://dinoman.netifi.com:8000", {}, {});
     }
 
     map(): Single<Map.AsObject> {

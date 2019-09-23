@@ -17,8 +17,8 @@ export default class PlayerServiceClientSharedAdapter implements PlayerService {
     constructor() {
         const urlParams = new URLSearchParams(window.location.search);
         const endpoint = urlParams.get('endpoint');
-        this.service = new GRPCWebServices.PlayerServiceClient(endpoint || "http://localhost:8000", {}, {});
-        this.locationServiceFallback = new GRPCWebServices.LocationServiceClient(endpoint || "http://localhost:8000", {}, {});
+        this.service = new GRPCWebServices.PlayerServiceClient(endpoint || "http://dinoman.netifi.com:8000", {}, {});
+        this.locationServiceFallback = new GRPCWebServices.LocationServiceClient(endpoint || "http://dinoman.netifi.com:8000", {}, {});
     }
 
     locate(locationStream: Flux<Location.AsObject>): Single<void> {

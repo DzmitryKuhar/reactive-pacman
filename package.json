@@ -10,7 +10,7 @@
   "devDependencies": {
     "@types/uuid": "^3.4.4",
     "follow-redirects": "^1.7.0",
-    "lerna": "^3.14.1"
+    "lerna": "^3.15.0"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.1",

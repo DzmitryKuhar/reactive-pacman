@@ -27,14 +27,7 @@ public class GrpcMetricsSnapshotHandlerProxyController extends
 
     @Override
     public Mono<Empty> streamMetricsSnapshots(Flux<MetricsSnapshot> messages) {
-        return delegate.streamMetricsSnapshots(messages
-//                .doOnNext(e -> LOGGER.info("UUID: {}. Got element, {}", "local", e.hashCode()))
-//                            .doOnRequest(e -> LOGGER.info("UUID: {}. Got request, {}", "local", e))
-//                            .doOnError(e -> LOGGER.error("UUID: {}. Got error.", "local", e))
-//                            .doOnComplete(() -> LOGGER.info("UUID: {}. Got completion",  "local"))
-//                            .doOnCancel(() -> LOGGER.info("UUID: {}. Got cancellation",  "local"))
-            .hide()
-        );
+        return delegate.streamMetricsSnapshots(messages.hide());
     }
 
     @Override

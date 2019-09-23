@@ -75,7 +75,7 @@ public class RSocketRpcDoser {
                 )
                 .doOnError(t -> LOGGER.error("Reconnecting. ", t))
                 .retryBackoff(10, Duration.ofSeconds(2), Duration.ofSeconds(5))
-                .delaySubscription(Duration.ofMillis(200)),
+                .delaySubscription(Duration.ofMillis(100)),
                 1
             )
             .subscribe(rSocket -> {

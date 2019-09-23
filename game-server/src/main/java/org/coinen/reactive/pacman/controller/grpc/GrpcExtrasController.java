@@ -30,7 +30,7 @@ public class GrpcExtrasController extends ReactorExtrasServiceGrpc.ExtrasService
     @Override
     public Flux<Extra> extras(Mono<Empty> request) {
         return extrasService.extras()
-                            .onBackpressureDrop()
+                            .onBackpressureBuffer()
                             .subscriberContext(Context.of("uuid", CONTEXT_UUID_KEY.get()));
     }
 }

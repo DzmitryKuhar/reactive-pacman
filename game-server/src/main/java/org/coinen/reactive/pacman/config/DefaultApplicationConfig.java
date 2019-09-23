@@ -2,8 +2,10 @@ package org.coinen.reactive.pacman.config;
 
 import org.coinen.reactive.pacman.repository.ExtrasRepository;
 import org.coinen.reactive.pacman.repository.PlayerRepository;
+import org.coinen.reactive.pacman.repository.PowerRepository;
 import org.coinen.reactive.pacman.repository.support.InMemoryExtrasRepository;
 import org.coinen.reactive.pacman.repository.support.InMemoryPlayerRepository;
+import org.coinen.reactive.pacman.repository.support.InMemoryPowerRepository;
 import org.coinen.reactive.pacman.service.ExtrasService;
 import org.coinen.reactive.pacman.service.GameService;
 import org.coinen.reactive.pacman.service.MapService;
@@ -30,8 +32,17 @@ public class DefaultApplicationConfig {
     }
 
     @Bean
-    public ExtrasService extrasService(ExtrasRepository extrasRepository, PlayerRepository playerRepository) {
-        return new DefaultExtrasService(extrasRepository, playerRepository);
+    public PowerRepository powerRepository() {
+        return new InMemoryPowerRepository();
+    }
+
+    @Bean
+    public ExtrasService extrasService(
+        ExtrasRepository extrasRepository,
+        PlayerRepository playerRepository,
+        PowerRepository powerRepository
+    ) {
+        return new DefaultExtrasService(extrasRepository, playerRepository, powerRepository);
     }
 
     @Bean
@@ -48,8 +59,12 @@ public class DefaultApplicationConfig {
     }
 
     @Bean
-    public PlayerService playerService(PlayerRepository playerRepository,
-        ExtrasService extrasService, MapService mapService) {
-        return new DefaultPlayerService(playerRepository, extrasService, mapService);
+    public PlayerService playerService(
+        PlayerRepository playerRepository,
+        ExtrasService extrasService,
+        MapService mapService,
+        PowerRepository powerRepository
+    ) {
+        return new DefaultPlayerService(playerRepository, extrasService, mapService, powerRepository);
     }
 }

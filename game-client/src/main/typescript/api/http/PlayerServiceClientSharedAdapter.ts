@@ -37,7 +37,7 @@ export default class PlayerServiceClientSharedAdapter implements PlayerService {
                     (location) => {
                         if(!isFetching) {
                             isFetching = true;
-                            fetch(`${endpoint || "http://localhost:3000"}/http/locate`, {
+                            fetch(`${endpoint || "http://dinoman.netifi.com:3000"}/http/locate`, {
                                 method: "POST",
                                 body: location.serializeBinary(),
                                 credentials: "include"
@@ -60,7 +60,7 @@ export default class PlayerServiceClientSharedAdapter implements PlayerService {
             this.sharedPlayersStream = new DirectProcessor();
             
             Flux.from<Player>(FlowableAdapter.wrap(new Flowable(subscriber => {
-                const eventSource = new EventSource(`${endpoint || "http://localhost:3000"}/http/players`, { withCredentials : true });
+                const eventSource = new EventSource(`${endpoint || "http://dinoman.netifi.com:3000"}/http/players`, { withCredentials : true });
 
                 subscriber.onSubscribe({
                     request: (): void => {},

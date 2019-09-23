@@ -42,6 +42,7 @@ public class ReconnectingRSocket extends BaseSubscriber<RSocket> implements RSoc
     protected void hookOnNext(RSocket value) {
         LOGGER.info("Connected.");
         value.onClose()
+             .doOnSuccess((__) -> RSOCKET_MONO.compareAndSet(this, rSocketMono, MonoProcessor.create()))
              .subscribe(null, this::reconnect, this::reconnect);
         rSocketMono.onNext(value);
     }

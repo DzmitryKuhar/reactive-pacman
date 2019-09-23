@@ -58,7 +58,7 @@ export default class ExtrasManager implements SceneSupport {
 
     insertExtra(position: number) {
         const normalizedPosition = Math.abs(position);
-        const { map: { width, height }, size, scale } = this.config;
+        const { map: { width }, size, scale } = this.config;
         const i = normalizedPosition % width;
         const j = Math.floor(normalizedPosition / width);
         const sprite = this.scene.physics.add

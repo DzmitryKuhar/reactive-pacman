@@ -10,7 +10,7 @@ export default class ExtrasServiceClientAdapter implements ExtrasService {
         const urlParams = new URLSearchParams(window.location.search);
         const endpoint = urlParams.get('endpoint');
         return Flux.from<Extra>(FlowableAdapter.wrap(new Flowable(subscriber => {
-                const eventSource = new EventSource(`${endpoint || "http://localhost:3000"}/http/extras`, { withCredentials : true });
+                const eventSource = new EventSource(`${endpoint || "http://dinoman.netifi.com:3000"}/http/extras`, { withCredentials : true });
 
                 subscriber.onSubscribe({
                     request: (): void => {},

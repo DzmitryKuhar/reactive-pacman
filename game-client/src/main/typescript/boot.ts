@@ -44,12 +44,12 @@ export class Boot extends Scene {
 
     create(config : any) {
         const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-        if(type === "rsocket") {
+        const type = urlParams.get('type') || "rsocket";
+        if (type === "rsocket") {
             const meterRegistry: ReactiveMetricsRegistry = new ReactiveMetricsRegistry();
 
             let rSocket: ReactiveSocket<any, any>;
-            const client = new RpcClient({
+            const clientSupplier = () => new RpcClient({
                 // transport: new RSocketResumableTransport(
                 //     () =>  rSocketWebSocketClient, // provider for low-level transport instances
                 //     {
@@ -60,8 +60,8 @@ export class Boot extends Scene {
                 // ),
                 transport: new RSocketWebSocketClient(
                     {
-                        url: urlParams.get('endpoint') || 'ws://localhost:3000',
-                    },
+                        url: urlParams.get('endpoint') || 'ws://dinoman.netifi.com:3000',
+                    } as any,//TODO: FIXME
                     BufferEncoders
                 ),
                 setup: {
@@ -75,9 +75,12 @@ export class Boot extends Scene {
                 }, undefined, meterRegistry)
             });
 
+            let client: RpcClient<any, any> = undefined;
+
             let rSocketReconnectionNumber = 0;
 
             const connect = () => {
+                client = clientSupplier();
                 this.showLoadingCircle(() => {
                     client
                         .connect()
@@ -106,6 +109,7 @@ export class Boot extends Scene {
 
                             rpcCall();
                         }, () => {
+                            client.close();
                             setTimeout(() => connect(), ++rSocketReconnectionNumber * 1000)
                         });
                 });
@@ -121,7 +125,7 @@ export class Boot extends Scene {
             );
         } else if (type === "socket.io") {
             this.showLoadingCircle(() => {
-                const socket: SocketIOClient.Socket = io(urlParams.get('endpoint') || 'ws://localhost:3000', {
+                const socket: SocketIOClient.Socket = io(urlParams.get('endpoint') || 'ws://dinoman.netifi.com:3000', {
                     transports: ["websocket"]
                 });
 

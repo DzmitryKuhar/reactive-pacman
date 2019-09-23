@@ -3,7 +3,7 @@ const https = require('follow-redirects/https');
 const fs = require('fs');
 
 const platform = os.platform();
-const gRpcWebVersion = '1.0.4';
+const gRpcWebVersion = '1.0.5';
 const baseLink = `https://github.com/grpc/grpc-web/releases/download/${gRpcWebVersion}/protoc-gen-grpc-web`;
 const arch = 'x86_64';
 const destinationFile = "./node_modules/.bin/protoc-gen-grpc-web.exe";

@@ -13,8 +13,8 @@ export default class GameServiceClientAdapter implements GameService {
         nicknameProto.setValue(value);
 
         return new Single(subject => {
-            subject.onSubscribe();
-            fetch(`${endpoint || "http://localhost:3000"}/http/start`, {
+            subject.onSubscribe(undefined);//TODO: FIXME
+            fetch(`${endpoint || "http://dinoman.netifi.com:3000"}/http/start`, {
                 method: "POST",
                 body: nicknameProto.serializeBinary(),
                 credentials: "include"

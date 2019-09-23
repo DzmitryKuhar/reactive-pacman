@@ -88,38 +88,38 @@ export default class Menu extends Scene {
         //$(".avgrund-popup").remove();
         this.closeAvgrund();
 
-        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-            $("#to-scroll").show();
-            $("body").height($(window).height() + 1000);
-            // $("body").css("overflow", "scroll");
-            // $('#phaser-overlay').css("position", "relative");
-            $('#phaser-overlay-container').hide();
-            $(window).scrollTop(0);
-            $(window).on("scroll", (e) => {
-                if (window.scrollY > 500) {
-                    $("#canvas-container").css("position", "absolute");
-                    $(window).off("scroll");
-                    $('#phaser-overlay-container').show();
-                    // $('#phaser-overlay').css("position", "fixed");
-                    $("html").css("overflow", "none");
-                    $("body").css("overflow", "none");
-                    $("body").height("100%");
-                    $("#canvas-container").show();
+        // if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        //     $("#to-scroll").show();
+        //     $("body").height($(window).height() + 1000);
+        //     // $("body").css("overflow", "scroll");
+        //     // $('#phaser-overlay').css("position", "relative");
+        //     $('#phaser-overlay-container').hide();
+        //     $(window).scrollTop(0);
+        //     $(window).on("scroll", (e) => {
+        //         if (window.scrollY > 500) {
+        //             $("#canvas-container").css("position", "absolute");
+        //             $(window).off("scroll");
+        //             $('#phaser-overlay-container').show();
+        //             // $('#phaser-overlay').css("position", "fixed");
+        //             $("html").css("overflow", "none");
+        //             $("body").css("overflow", "none");
+        //             $("body").height("100%");
+        //             $("#canvas-container").show();
 
-                    $("#to-scroll").remove();
+        //             $("#to-scroll").remove();
 
-                    this.gameService.start({value: this.nickname})
-                        .then((config: Config.AsObject) => {
-                            this.scene.start('Game', {
-                                ...this.config,
-                                player: config.player,
-                                players: config.playersList,
-                                extras: config.extrasList,
-                            });
-                        })
-                }
-            });
-        } else {
+        //             this.gameService.start({value: this.nickname})
+        //                 .then((config: Config.AsObject) => {
+        //                     this.scene.start('Game', {
+        //                         ...this.config,
+        //                         player: config.player,
+        //                         players: config.playersList,
+        //                         extras: config.extrasList,
+        //                     });
+        //                 })
+        //         }
+        //     });
+        // } else {
             $("#canvas-container").show();
             this.gameService.start({value: this.nickname})
                 .then((config: Config.AsObject) => {
@@ -130,7 +130,7 @@ export default class Menu extends Scene {
                         extras: config.extrasList,
                     });
             });
-        }
+        // }
     }
 }
 

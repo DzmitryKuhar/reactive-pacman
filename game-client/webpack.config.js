@@ -16,7 +16,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Netifi Pac-Man',
-            template: path.join(__dirname, 'src/main/resources/public/index.html')
+            template: path.join(__dirname, 'src/main/resources/public/index.html'),
+            favicon: path.join(__dirname, 'src/main/resources/public/favicon.ico')
         }),
         new CopyPlugin([
             { from: 'src/main/resources/public', to: './' },

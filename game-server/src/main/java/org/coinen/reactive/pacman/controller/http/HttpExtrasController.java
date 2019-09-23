@@ -33,7 +33,7 @@ public class HttpExtrasController {
     public Flux<String> extras(@CookieValue("uuid") String uuid) {
         return extrasService.extras()
                             .map(e -> Arrays.toString(e.toByteArray()))
-                            .onBackpressureDrop()
+                            .onBackpressureBuffer()
                             .transform(Metrics.<String>timed(registry, "http.server", "service", org.coinen.pacman.ExtrasService.SERVICE, "method", org.coinen.pacman.ExtrasService.METHOD_EXTRAS))
                             .subscriberContext(Context.of("uuid", uuid));
     }

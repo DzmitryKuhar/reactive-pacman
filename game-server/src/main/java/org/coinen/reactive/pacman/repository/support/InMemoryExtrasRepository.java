@@ -1,8 +1,12 @@
 package org.coinen.reactive.pacman.repository.support;
 
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+
 import org.coinen.reactive.pacman.repository.ExtrasRepository;
-import org.roaringbitmap.PeekableIntIterator;
+import org.jctools.maps.NonBlockingSetInt;
 import org.roaringbitmap.RoaringBitmap;
+
+import static org.coinen.reactive.pacman.repository.ExtrasRepository.randomPosition;
 
 public class InMemoryExtrasRepository implements ExtrasRepository {
 
@@ -10,8 +14,24 @@ public class InMemoryExtrasRepository implements ExtrasRepository {
     final int mapWidth = 60;
     final int mapHeight = 60;
     final int offset = 11;
+    final int totalSpace = (mapWidth - 2 * offset + 1) * (mapHeight - 2 * offset + 1);
 
+    final NonBlockingSetInt controlMap = new NonBlockingSetInt();
     final RoaringBitmap bitmap = new RoaringBitmap();
+
+    volatile int powerUpExtrasCount = 0;
+    static final AtomicIntegerFieldUpdater<InMemoryExtrasRepository> POWER_UP_EXTRAS_COUNT =
+        AtomicIntegerFieldUpdater.newUpdater(InMemoryExtrasRepository.class, "powerUpExtrasCount");
+
+    public InMemoryExtrasRepository() {
+        int[] generate = generate(mapWidth, mapHeight, offset);
+
+        for (int extra : generate) {
+            controlMap.add(extra);
+        }
+
+        bitmap.add(generate);
+    }
 
     @Override
     public int collideExtra(float x, float y) {
@@ -20,10 +40,13 @@ public class InMemoryExtrasRepository implements ExtrasRepository {
 
         var flattenPosition = i + j * mapWidth;
 
-        if (bitmap.checkedRemove(flattenPosition)) {
-            return flattenPosition;
-        } else if(bitmap.checkedRemove(-flattenPosition)) {
-            return -flattenPosition;
+        if (controlMap.remove(flattenPosition)) {
+            if (bitmap.checkedRemove(flattenPosition)) {
+                return flattenPosition;
+            }
+            else if (bitmap.checkedRemove(-flattenPosition)) {
+                return -flattenPosition;
+            }
         }
 
         return 0;
@@ -31,39 +54,46 @@ public class InMemoryExtrasRepository implements ExtrasRepository {
 
     @Override
     public int createExtra(int size) {
-        var nextPosition = 0;
-        do {
-            nextPosition = randomPosition(mapWidth, mapHeight, offset);
-        } while(bitmap.contains(nextPosition) || bitmap.contains(-nextPosition));
+        var powerUpAllowed = false;
 
-        var powerupCount = 0;
+        while (true) {
+            var initialCnt = powerUpExtrasCount;
+            int nextCnt = initialCnt;
 
-        PeekableIntIterator iterator = bitmap.getIntIterator();
+            if (size <= 2) {
+                powerUpAllowed = initialCnt < Math.ceil(totalSpace / 360);
+            }
+            else if (size <= 4) {
+                powerUpAllowed = initialCnt < Math.ceil(totalSpace / 900);
+            }
+            else {
+                powerUpAllowed = initialCnt == 0 && Math.random() < 0.02;
+            }
 
-        while (iterator.hasNext()) {
-            if (iterator.next() < 0) {
-                powerupCount++;
+            if (powerUpAllowed) {
+                nextCnt++;
+            }
+
+            if (POWER_UP_EXTRAS_COUNT.compareAndSet(this, initialCnt, nextCnt)) {
+                break;
             }
         }
 
-        var powerupAllowed = false;
-        var totalSpace =
-            (mapWidth - 2 * offset + 1) * (mapHeight - 2 * offset + 1);
-        if (size <= 2) {
-            powerupAllowed = powerupCount < Math.ceil(totalSpace / 360);
-        }
-        else if (size <= 4) {
-            powerupAllowed = powerupCount < Math.ceil(totalSpace / 900);
-        }
-        else {
-            powerupAllowed = powerupCount == 0 && Math.random() < 0.02;
-        }
+        if (powerUpAllowed) {
+            var nextPosition = 0;
+            do {
+                nextPosition = randomPosition(mapWidth, mapHeight, offset);
 
-        if (powerupAllowed) {
+            } while (!controlMap.add(nextPosition));
             bitmap.add(-nextPosition);
             return -nextPosition;
         }
         else {
+            var nextPosition = 0;
+            do {
+                nextPosition = randomPosition(mapWidth, mapHeight, offset);
+
+            } while (!controlMap.add(nextPosition));
             bitmap.add(nextPosition);
             return nextPosition;
         }
@@ -73,15 +103,5 @@ public class InMemoryExtrasRepository implements ExtrasRepository {
     @SuppressWarnings("unchecked")
     public Iterable<Integer> finaAll() {
         return bitmap;
-    }
-
-    @Override
-    public void saveAll(int[] extras) {
-        bitmap.add(extras);
-    }
-
-
-    static int randomPosition(int width, int height, int offset) {
-        return (int) (Math.floor(Math.random() * (width - 2 * offset + 1) + offset) +  Math.floor(Math.random() * (height - 2 * offset + 1) + offset) * height);
     }
 }

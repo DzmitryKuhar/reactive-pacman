@@ -1,7 +1,6 @@
 declare module 'rsocket-rpc-metrics' {
 
   import { Single, Flowable } from 'rsocket-flowable';
-  import { IFutureSubscriber } from 'rsocket-flowable';
   import * as jspb from "google-protobuf";
   import * as rsocket_flowable from 'rsocket-flowable';
   import {ReactiveSocket, Responder, Payload, ISubscriber, ISubscription} from 'rsocket-types';

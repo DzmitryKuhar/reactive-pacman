@@ -13,7 +13,7 @@ export default class ExtrasServiceClientAdapter implements ExtrasService {
     constructor() {
         const urlParams = new URLSearchParams(window.location.search);
         const endpoint = urlParams.get('endpoint');
-        this.service = new GRPCWebServices.ExtrasServiceClient(endpoint || "http://localhost:8000", {}, {});
+        this.service = new GRPCWebServices.ExtrasServiceClient(endpoint || "http://dinoman.netifi.com:8000", {}, {});
     }
 
     extras(): Flux<Extra.AsObject> {
